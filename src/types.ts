@@ -97,6 +97,10 @@ export interface Order {
   status: OrderStatus;
   paymentUrl: string | null;
   notes: string;
+  /** Prazo da reserva de estoque dos pedidos via WhatsApp (só enquanto pendente). */
+  expiresAt: string | null;
+  /** "expired" = cancelado automaticamente por falta de pagamento. */
+  cancelReason: "expired" | "customer" | "admin" | null;
   createdAt: string;
   updatedAt: string;
 }

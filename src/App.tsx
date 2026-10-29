@@ -4,6 +4,7 @@ import CartDrawer from "./components/CartDrawer";
 import Footer from "./components/Footer";
 import { RequireAdmin, RequireAuth } from "./components/Guards";
 import Header from "./components/Header";
+import OrderNotices from "./components/OrderNotices";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import { FavoritesProvider } from "./context/FavoritesContext";
@@ -44,6 +45,7 @@ export default function App() {
               <CartProvider>
                 <ScrollToTop />
                 <Header />
+                <OrderNotices />
                 <main className="min-h-[70vh]">
                   <Routes>
                     {/* Catálogo é público; o login só é pedido ao adicionar ao carrinho. */}

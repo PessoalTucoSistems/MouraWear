@@ -1,15 +1,18 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { WhatsappIcon } from "../components/Icons";
 import ProductArt from "../components/ProductArt";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { shippingFor, useStore } from "../context/StoreContext";
 import { useToast } from "../context/ToastContext";
 import { api } from "../lib/api";
-import { money, onlyDigits } from "../lib/format";
+import { money, onlyDigits, whatsappLink, whatsappOrderMessage } from "../lib/format";
 import type { Address, Order, PaymentMethod } from "../types";
 
 const ADDRESS_KEY = "mw_last_address";
+// Mesmo prazo do backend (WHATSAPP_HOLD_HOURS).
+const HOLD_HOURS = 7;
 
 export default function CheckoutPage() {
   const { user } = useAuth();
@@ -27,7 +30,6 @@ export default function CheckoutPage() {
     }
     return { cep: "", street: "", number: "", complement: "", district: "", city: "", state: "", phone: user?.phone || "" };
   });
-  const [payment, setPayment] = useState<PaymentMethod>("pix");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [cepLoading, setCepLoading] = useState(false);
@@ -54,8 +56,13 @@ export default function CheckoutPage() {
     }
   };
 
-  const submit = async (e: FormEvent) => {
+  const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // Cada botão de finalizar envia a sua forma de pagamento.
+    const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
+    const payment = (submitter?.value || "whatsapp") as PaymentMethod;
+    // A aba do WhatsApp é aberta já no clique: depois do await o navegador bloquearia o pop-up.
+    const whatsTab = payment === "whatsapp" ? window.open("", "_blank") : null;
     setSubmitting(true);
     try {
       const order = await api<Order>("/orders", {
@@ -77,8 +84,14 @@ export default function CheckoutPage() {
         window.location.href = order.paymentUrl;
         return;
       }
+      if (payment === "whatsapp") {
+        const link = whatsappLink(settings.whatsapp, whatsappOrderMessage(order));
+        if (whatsTab) whatsTab.location.href = link;
+        else window.location.href = link;
+      }
       navigate(`/pedidos/${order.id}?novo=1`, { replace: true });
     } catch (err) {
+      whatsTab?.close();
       toast((err as Error).message, "error");
     } finally {
       setSubmitting(false);
@@ -94,11 +107,8 @@ export default function CheckoutPage() {
     );
   }
 
-  const methods: { id: PaymentMethod; title: string; text: string; show: boolean }[] = [
-    { id: "pix", title: "PIX", text: "Você recebe a chave PIX após confirmar o pedido.", show: true },
-    { id: "mercadopago", title: "Cartão ou PIX online", text: "Pagamento seguro pelo Mercado Pago, em até 12x.", show: settings.mercadoPagoEnabled },
-    { id: "whatsapp", title: "Combinar no WhatsApp", text: "Fale com a gente para combinar pagamento e entrega.", show: !!settings.whatsapp },
-  ];
+  const canWhatsapp = !!settings.whatsapp;
+  const canPayOnline = settings.mercadoPagoEnabled;
 
   return (
     <form onSubmit={submit} className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-10 lg:grid-cols-[1fr_400px]">
@@ -145,20 +155,23 @@ export default function CheckoutPage() {
 
         <section>
           <h2 className="display mb-4 text-3xl"><span className="text-acid">02</span> Pagamento</h2>
-          <div className="grid gap-3">
-            {methods.filter((m) => m.show).map((m) => (
-              <label
-                key={m.id}
-                className={`flex cursor-pointer items-start gap-4 border-2 p-4 transition ${payment === m.id ? "border-acid bg-acid/5" : "border-line hover:border-bone"}`}
-              >
-                <input type="radio" name="payment" className="mt-1 accent-[#c8ff00]" checked={payment === m.id} onChange={() => setPayment(m.id)} />
-                <span>
-                  <span className="block font-semibold uppercase">{m.title}</span>
-                  <span className="text-sm text-ash">{m.text}</span>
-                </span>
-              </label>
-            ))}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {canWhatsapp && (
+              <div className="border-2 border-line p-4">
+                <p className="flex items-center gap-2 font-semibold uppercase"><WhatsappIcon className="h-5 w-5 text-acid" /> Chamar no Whats</p>
+                <p className="mt-1 text-sm text-ash">
+                  Seu pedido chega pra gente no WhatsApp e combinamos o pagamento por lá. As peças ficam reservadas por {HOLD_HOURS} horas.
+                </p>
+              </div>
+            )}
+            {canPayOnline && (
+              <div className="border-2 border-line p-4">
+                <p className="font-semibold uppercase">Pagar online</p>
+                <p className="mt-1 text-sm text-ash">Cartão ou PIX pelo Mercado Pago, com pagamento seguro e confirmação na hora.</p>
+              </div>
+            )}
           </div>
+          <p className="mt-3 text-xs text-ash">Escolha como pagar nos botões do resumo do pedido.</p>
           <label className="label mt-6" htmlFor="notes">Observações (opcional)</label>
           <textarea id="notes" className="input min-h-24" value={notes} onChange={(e) => setNotes(e.target.value)} />
         </section>
@@ -188,9 +201,21 @@ export default function CheckoutPage() {
           <span className="display text-2xl">Total</span>
           <span className="display text-4xl text-acid">{money(total)}</span>
         </div>
-        <button className="btn btn-acid mt-6 w-full" disabled={submitting}>
-          {submitting ? "Enviando..." : "Confirmar pedido"}
-        </button>
+        <div className="mt-6 flex flex-col gap-3">
+          {canWhatsapp && (
+            <button type="submit" name="payment" value="whatsapp" className="btn btn-acid w-full" disabled={submitting}>
+              <WhatsappIcon className="h-5 w-5" /> {submitting ? "Enviando..." : "Chamar no Whats"}
+            </button>
+          )}
+          {canPayOnline && (
+            <button type="submit" name="payment" value="mercadopago" className={`btn w-full ${canWhatsapp ? "btn-ghost" : "btn-acid"}`} disabled={submitting}>
+              {submitting ? "Enviando..." : "Pagar online"}
+            </button>
+          )}
+          {!canWhatsapp && !canPayOnline && (
+            <p className="text-center text-sm text-ash">Pagamentos indisponíveis no momento. Tente novamente mais tarde.</p>
+          )}
+        </div>
       </aside>
     </form>
   );

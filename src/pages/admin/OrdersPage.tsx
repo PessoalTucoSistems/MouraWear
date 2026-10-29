@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import Modal from "../../components/Modal";
 import { useToast } from "../../context/ToastContext";
 import { api } from "../../lib/api";
-import { dateTime, money, PAYMENT_LABEL, STATUS_LABEL, whatsappLink } from "../../lib/format";
+import { dateTime, money, PAYMENT_LABEL, STATUS_LABEL, time, whatsappLink } from "../../lib/format";
 import type { Order, OrderStatus } from "../../types";
 import { StatusBadge } from "../OrderPages";
 
@@ -32,6 +32,21 @@ function OrderModal({ order, onClose, onChange }: { order: Order; onClose: () =>
         <StatusBadge status={order.status} />
         <span className="font-mono text-xs text-ash">{dateTime(order.createdAt)} · {PAYMENT_LABEL[order.paymentMethod]}</span>
       </div>
+
+      {order.status === "pending" && order.paymentMethod === "whatsapp" && (
+        <div className="mt-5 border-2 border-yellow-300 p-4">
+          <p className="text-sm">
+            Pedido feito pelo WhatsApp: confirme o pagamento manualmente.
+            {order.expiresAt && (
+              <> As peças estão reservadas até <span className="font-mono text-yellow-300">{dateTime(order.expiresAt)}</span>; depois disso o pedido é cancelado sozinho e o estoque volta.</>
+            )}
+          </p>
+          <button onClick={() => setStatus("paid")} className="btn btn-acid mt-3 w-full sm:w-auto">Confirmar pagamento</button>
+        </div>
+      )}
+      {order.status === "canceled" && order.cancelReason === "expired" && (
+        <p className="mt-5 border border-blood p-3 text-sm text-blood">Cancelado automaticamente: o pagamento não foi confirmado no prazo.</p>
+      )}
 
       <p className="label mt-5">Alterar status</p>
       <div className="flex flex-wrap gap-2">
@@ -151,7 +166,11 @@ export default function OrdersPage() {
                   <p className="text-xs text-ash">{o.items.reduce((s, i) => s + i.quantity, 0)} peça(s)</p>
                 </td>
                 <td className="p-3 font-mono text-xs" data-label="Pagamento">{PAYMENT_LABEL[o.paymentMethod]}</td>
-                <td className="p-3" data-label="Status"><StatusBadge status={o.status} /></td>
+                <td className="p-3" data-label="Status">
+                  <StatusBadge status={o.status} />
+                  {o.status === "pending" && o.expiresAt && <p className="mt-1 font-mono text-[10px] text-yellow-300">expira {time(o.expiresAt)}</p>}
+                  {o.cancelReason === "expired" && o.status === "canceled" && <p className="mt-1 font-mono text-[10px] text-ash">prazo esgotado</p>}
+                </td>
                 <td className="p-3 text-right font-mono" data-label="Total">{money(o.total)}</td>
               </tr>
             ))}

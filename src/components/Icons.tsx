@@ -21,3 +21,9 @@ export const ArrowIcon = base(<path d="M5 12h14m-5-5 5 5-5 5" />);
 export const PlusIcon = base(<path d="M12 5v14M5 12h14" />);
 export const MinusIcon = base(<path d="M5 12h14" />);
 export const TrashIcon = base(<path d="M5 7h14M10 7V4h4v3m-7 0 1 13h8l1-13" />);
+export const WhatsappIcon = base(
+  <>
+    <path d="M4 20l1.3-4A8 8 0 1 1 8 18.7L4 20Z" />
+    <path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-2.3-2.3l.8-1-1-2L9 9.5Z" strokeWidth={1.4} />
+  </>,
+);

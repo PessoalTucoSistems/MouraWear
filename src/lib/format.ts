@@ -1,4 +1,4 @@
-import type { OrderStatus, PaymentMethod } from "../types";
+import type { Order, OrderStatus, PaymentMethod } from "../types";
 
 const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 export const money = (value: number) => brl.format(value || 0);
@@ -24,7 +24,7 @@ export const STATUS_STYLE: Record<OrderStatus, string> = {
 
 export const PAYMENT_LABEL: Record<PaymentMethod, string> = {
   pix: "PIX",
-  whatsapp: "Combinar no WhatsApp",
+  whatsapp: "Pedido pelo WhatsApp",
   mercadopago: "Cartão / PIX online",
 };
 
@@ -37,3 +37,27 @@ export const totalStock = (sizes: { stock: number }[]) => sizes.reduce((sum, s) 
 
 export const discountPercent = (price: number, compareAt: number | null) =>
   compareAt && compareAt > price ? Math.round((1 - price / compareAt) * 100) : 0;
+
+export const time = (iso: string) => new Date(iso).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+
+/** Mensagem que o cliente envia à loja ao finalizar um pedido pelo WhatsApp. */
+export function whatsappOrderMessage(order: Order) {
+  const a = order.address;
+  const items = order.items
+    .map((i) => `• ${i.quantity}x ${i.name} (tam. ${i.size}) — ${money(i.price * i.quantity)}`)
+    .join("\n");
+  return [
+    `Olá! Meu nome é ${order.customerName} e acabei de fazer o pedido *#${order.id}* no site da MoreiraWear.`,
+    "",
+    "Gostaria de finalizar a compra dos seguintes itens:",
+    items,
+    "",
+    `Subtotal: ${money(order.subtotal)}`,
+    `Frete: ${order.shipping ? money(order.shipping) : "Grátis"}`,
+    `*Total: ${money(order.total)}*`,
+    "",
+    `Entrega: ${a.street}, ${a.number}${a.complement ? ` — ${a.complement}` : ""}${a.district ? `, ${a.district}` : ""} — ${a.city}/${a.state}, CEP ${a.cep}`,
+    "",
+    "Fico no aguardo das instruções para o pagamento. Obrigado!",
+  ].join("\n");
+}

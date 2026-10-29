@@ -7,12 +7,9 @@ import { useCart } from "../context/CartContext";
 import { useStore } from "../context/StoreContext";
 import { useToast } from "../context/ToastContext";
 import { api } from "../lib/api";
-import { dateTime, money, PAYMENT_LABEL, STATUS_LABEL, STATUS_STYLE, time, whatsappLink, whatsappOrderMessage } from "../lib/format";
+import { dateTime, expiredText, money, PAYMENT_LABEL, STATUS_LABEL, STATUS_STYLE, time, whatsappLink, whatsappOrderMessage } from "../lib/format";
 import type { Order, OrderStatus, Product } from "../types";
 
-// Mesmo prazo do backend (WHATSAPP_HOLD_HOURS).
-export const HOLD_HOURS = 7;
-export const EXPIRED_TEXT = `O pagamento não foi confirmado em ${HOLD_HOURS} horas, então o pedido foi cancelado automaticamente e as peças voltaram para o estoque.`;
 
 export function StatusBadge({ status }: { status: OrderStatus }) {
   return <span className={`tag ${STATUS_STYLE[status]}`}>{STATUS_LABEL[status]}</span>;
@@ -199,7 +196,7 @@ export function OrderDetailPage() {
       {order.status === "canceled" && (
         <section className="mt-8 border-2 border-blood p-6">
           <p className="label !text-blood">Pedido cancelado</p>
-          <p className="text-sm">{order.cancelReason === "expired" ? EXPIRED_TEXT : "Este pedido foi cancelado e as peças voltaram para o estoque."}</p>
+          <p className="text-sm">{order.cancelReason === "expired" ? expiredText(order) : "Este pedido foi cancelado e as peças voltaram para o estoque."}</p>
           <button onClick={() => repeat(order)} className="btn btn-acid mt-4">Repetir pedido</button>
         </section>
       )}
@@ -241,6 +238,12 @@ export function OrderDetailPage() {
           {order.paymentMethod === "sumup" && <SumupPayment order={order} onChange={setOrder} />}
           {order.paymentMethod === "mercadopago" && order.paymentUrl && (
             <a href={order.paymentUrl} className="btn btn-acid">Pagar agora</a>
+          )}
+          {(order.paymentMethod === "sumup" || order.paymentMethod === "mercadopago") && order.expiresAt && (
+            <p className="mt-4 border-t border-line pt-3 text-xs text-ash">
+              Suas peças ficam reservadas até <span className="font-mono text-yellow-300">{time(order.expiresAt)}</span>. Sem pagamento até lá,
+              o pedido é cancelado automaticamente.
+            </p>
           )}
           {settings.whatsapp && order.paymentMethod !== "whatsapp" && (
             <a

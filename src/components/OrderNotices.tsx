@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { api } from "../lib/api";
-import { EXPIRED_TEXT, useRepeatOrder } from "../pages/OrderPages";
+import { expiredText } from "../lib/format";
+import { useRepeatOrder } from "../pages/OrderPages";
 import type { Order } from "../types";
 import { CloseIcon } from "./Icons";
 
@@ -40,7 +41,7 @@ export default function OrderNotices() {
       {notices.map((order) => (
         <div key={order.id} className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
           <p className="min-w-0 flex-1 basis-64 text-sm">
-            <span className="font-mono font-semibold text-blood">Pedido #{order.id} cancelado.</span> {EXPIRED_TEXT}
+            <span className="font-mono font-semibold text-blood">Pedido #{order.id} cancelado.</span> {expiredText(order)}
           </p>
           <div className="flex items-center gap-2">
             <Link to={`/pedidos/${order.id}`} className="font-mono text-xs uppercase tracking-wider underline hover:text-acid">

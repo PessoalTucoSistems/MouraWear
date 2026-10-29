@@ -39,6 +39,15 @@ export const totalStock = (sizes: { stock: number }[]) => sizes.reduce((sum, s) 
 export const discountPercent = (price: number, compareAt: number | null) =>
   compareAt && compareAt > price ? Math.round((1 - price / compareAt) * 100) : 0;
 
+// Mesmos prazos do backend (WHATSAPP_HOLD_HOURS / ONLINE_HOLD_MINUTES).
+export const WHATSAPP_HOLD = "7 horas";
+export const ONLINE_HOLD = "30 minutos";
+export const holdLabel = (method: PaymentMethod) => (method === "whatsapp" ? WHATSAPP_HOLD : ONLINE_HOLD);
+
+/** Texto do cancelamento automático por falta de pagamento. */
+export const expiredText = (order: Order) =>
+  `O pagamento não foi confirmado em ${holdLabel(order.paymentMethod)}, então o pedido foi cancelado automaticamente e as peças voltaram para o estoque.`;
+
 export const time = (iso: string) => new Date(iso).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 
 /** Mensagem que o cliente envia à loja ao finalizar um pedido pelo WhatsApp. */

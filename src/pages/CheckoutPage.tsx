@@ -7,12 +7,10 @@ import { useCart } from "../context/CartContext";
 import { shippingFor, useStore } from "../context/StoreContext";
 import { useToast } from "../context/ToastContext";
 import { api } from "../lib/api";
-import { money, onlyDigits, whatsappLink, whatsappOrderMessage } from "../lib/format";
+import { money, ONLINE_HOLD, onlyDigits, WHATSAPP_HOLD, whatsappLink, whatsappOrderMessage } from "../lib/format";
 import type { Address, Order, PaymentMethod } from "../types";
 
 const ADDRESS_KEY = "mw_last_address";
-// Mesmo prazo do backend (WHATSAPP_HOLD_HOURS).
-const HOLD_HOURS = 7;
 
 export default function CheckoutPage() {
   const { user } = useAuth();
@@ -160,7 +158,7 @@ export default function CheckoutPage() {
               <div className="border-2 border-line p-4">
                 <p className="flex items-center gap-2 font-semibold uppercase"><WhatsappIcon className="h-5 w-5 text-acid" /> Chamar no Whats</p>
                 <p className="mt-1 text-sm text-ash">
-                  Seu pedido chega pra gente no WhatsApp e combinamos o pagamento por lá. As peças ficam reservadas por {HOLD_HOURS} horas.
+                  Seu pedido chega pra gente no WhatsApp e combinamos o pagamento por lá. As peças ficam reservadas por {WHATSAPP_HOLD}.
                 </p>
               </div>
             )}
@@ -168,7 +166,7 @@ export default function CheckoutPage() {
               <div className="border-2 border-line p-4">
                 <p className="font-semibold uppercase">Pagar online</p>
                 <p className="mt-1 text-sm text-ash">
-                  PIX ou cartão {settings.onlinePayment === "sumup" ? "pela SumUp" : "pelo Mercado Pago"}, com pagamento seguro e confirmação na hora.
+                  PIX ou cartão {settings.onlinePayment === "sumup" ? "pela SumUp" : "pelo Mercado Pago"}, com confirmação na hora. Você tem {ONLINE_HOLD} para pagar.
                 </p>
               </div>
             )}

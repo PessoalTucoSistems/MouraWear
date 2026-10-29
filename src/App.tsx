@@ -27,7 +27,10 @@ import UsersPage from "./pages/admin/UsersPage";
 // Volta ao topo ao trocar de página (filtros na query string não contam).
 function ScrollToTop() {
   const { pathname } = useLocation();
-  useEffect(() => window.scrollTo(0, 0), [pathname]);
+  // Chaves: em navegadores recentes scrollTo retorna uma Promise, que o React trataria como cleanup.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
   return null;
 }
 

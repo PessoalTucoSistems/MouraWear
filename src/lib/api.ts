@@ -1,4 +1,6 @@
-export const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:3001").replace(/\/$/, "");
+// Em produção usa o backend do Render; VITE_API_URL sobrescreve se definida.
+const DEFAULT_API_URL = import.meta.env.PROD ? "https://backendmourawear.onrender.com" : "http://localhost:3001";
+export const API_URL = (import.meta.env.VITE_API_URL || DEFAULT_API_URL).replace(/\/$/, "");
 
 const TOKEN_KEY = "mw_token";
 

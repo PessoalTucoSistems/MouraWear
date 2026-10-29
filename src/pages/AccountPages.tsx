@@ -46,7 +46,7 @@ export function AccountPage() {
         </button>
       </div>
 
-      <div className="mt-10 grid gap-6 md:grid-cols-2">
+      <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2">
         <form className="card flex flex-col gap-4 p-6" onSubmit={(e) => save(e, profile)}>
           <h2 className="display text-2xl">Seus dados</h2>
           <div>
@@ -112,7 +112,8 @@ export function FavoritesPage() {
 export function NotFoundPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-24 text-center">
-      <p className="display text-[30vw] leading-none text-outline md:text-[14rem]">404</p>
+      <img src="/mascote.webp" alt="" className="mx-auto h-56 md:h-72" />
+      <p className="display mt-4 text-[22vw] leading-none text-outline md:text-[10rem]">404</p>
       <p className="mt-2 text-ash">Essa página saiu de linha.</p>
       <Link to="/" className="btn btn-acid mt-8">Voltar ao catálogo</Link>
     </div>

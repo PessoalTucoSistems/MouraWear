@@ -7,9 +7,15 @@ import { ArrowIcon } from "./Icons";
 function DefaultHero() {
   return (
     <section className="relative overflow-hidden border-b-2 border-bone">
-      <div className="mx-auto max-w-7xl px-4 py-16 md:py-24">
+      {/* Mascote da marca: atrás do texto no celular, ao lado no desktop. */}
+      <img
+        src="/mascote.webp"
+        alt=""
+        className="pointer-events-none absolute -right-6 bottom-0 h-[78%] max-w-none select-none opacity-90 sm:right-0 md:right-[4%] md:h-[96%] md:opacity-100 lg:right-[8%]"
+      />
+      <div className="relative mx-auto max-w-7xl px-4 py-16 md:py-24">
         <p className="font-mono text-xs uppercase tracking-[0.3em] text-acid">Drop 01 — disponível agora</p>
-        <h1 className="display mt-4 text-[22vw] md:text-[13rem]">
+        <h1 className="display mt-4 text-[22vw] md:text-[9.5rem] lg:text-[12rem] xl:text-[13rem]">
           Moura<br />
           <span className="text-outline">Wear</span>
         </h1>
@@ -17,10 +23,9 @@ function DefaultHero() {
           <a href="#catalogo" className="btn btn-acid">
             Ver catálogo <ArrowIcon className="h-4 w-4" />
           </a>
-          <p className="max-w-xs text-sm text-ash">Oversized, heavyweight e sem pedir licença. Peças em tiragem limitada.</p>
+          <p className="max-w-[14rem] text-sm text-ash sm:max-w-xs">Oversized, heavyweight e sem pedir licença. Peças em tiragem limitada.</p>
         </div>
       </div>
-      <span className="display pointer-events-none absolute -right-10 bottom-0 hidden rotate-90 select-none text-[10rem] text-white/[0.04] md:block">STREET</span>
     </section>
   );
 }

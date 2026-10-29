@@ -117,7 +117,7 @@ export default function UsersPage() {
         </button>
       </div>
       <div className="card overflow-x-auto">
-        <table className="w-full min-w-[640px] text-sm">
+        <table className="rtable w-full text-sm md:min-w-[640px]">
           <thead className="border-b border-line font-mono text-[10px] uppercase tracking-widest text-ash">
             <tr>
               <th className="p-3 text-left">Nome</th>
@@ -134,10 +134,10 @@ export default function UsersPage() {
                   <p className="font-semibold">{u.name}</p>
                   <p className="text-xs text-ash">{u.email}{u.phone && ` · ${u.phone}`}</p>
                 </td>
-                <td className="p-3"><span className={`tag ${u.role === "admin" ? "bg-acid text-ink" : "bg-coal text-bone"}`}>{u.role === "admin" ? "Admin" : "Cliente"}</span></td>
-                <td className="p-3 font-mono">{u.ordersCount}</td>
-                <td className="p-3 font-mono text-xs text-ash">{u.createdAt ? dateTime(u.createdAt) : "—"}</td>
-                <td className="p-3 text-right whitespace-nowrap">
+                <td className="p-3" data-label="Perfil"><span className={`tag ${u.role === "admin" ? "bg-acid text-ink" : "bg-coal text-bone"}`}>{u.role === "admin" ? "Admin" : "Cliente"}</span></td>
+                <td className="p-3 font-mono" data-label="Pedidos">{u.ordersCount}</td>
+                <td className="p-3 font-mono text-xs text-ash" data-label="Desde">{u.createdAt ? dateTime(u.createdAt) : "—"}</td>
+                <td className="rtable-actions p-3 text-right whitespace-nowrap">
                   <button className="mr-3 font-mono text-xs uppercase hover:text-acid" onClick={() => setEditing({ id: u.id, name: u.name, email: u.email, phone: u.phone, role: u.role, password: "" })}>
                     Editar
                   </button>

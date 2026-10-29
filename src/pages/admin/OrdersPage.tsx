@@ -48,7 +48,7 @@ function OrderModal({ order, onClose, onChange }: { order: Order; onClose: () =>
         ))}
       </div>
 
-      <div className="mt-6 grid gap-4 md:grid-cols-2">
+      <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="card p-4 text-sm">
           <p className="label">Cliente</p>
           <p className="font-semibold">{order.customerName}</p>
@@ -129,7 +129,7 @@ export default function OrdersPage() {
       </div>
 
       <div className="card overflow-x-auto">
-        <table className="w-full min-w-[640px] text-sm">
+        <table className="rtable w-full text-sm md:min-w-[640px]">
           <thead className="border-b border-line font-mono text-[10px] uppercase tracking-widest text-ash">
             <tr>
               <th className="p-3 text-left">Pedido</th>
@@ -146,13 +146,13 @@ export default function OrdersPage() {
                   <p className="font-mono font-semibold">#{o.id}</p>
                   <p className="font-mono text-xs text-ash">{dateTime(o.createdAt)}</p>
                 </td>
-                <td className="p-3">
+                <td className="p-3" data-label="Cliente">
                   <p>{o.customerName}</p>
                   <p className="text-xs text-ash">{o.items.reduce((s, i) => s + i.quantity, 0)} peça(s)</p>
                 </td>
-                <td className="p-3 font-mono text-xs">{PAYMENT_LABEL[o.paymentMethod]}</td>
-                <td className="p-3"><StatusBadge status={o.status} /></td>
-                <td className="p-3 text-right font-mono">{money(o.total)}</td>
+                <td className="p-3 font-mono text-xs" data-label="Pagamento">{PAYMENT_LABEL[o.paymentMethod]}</td>
+                <td className="p-3" data-label="Status"><StatusBadge status={o.status} /></td>
+                <td className="p-3 text-right font-mono" data-label="Total">{money(o.total)}</td>
               </tr>
             ))}
             {filtered.length === 0 && (

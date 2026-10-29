@@ -148,7 +148,7 @@ export function OrderDetailPage() {
         </section>
       )}
 
-      <section className="mt-8 grid gap-6 md:grid-cols-[1fr_280px]">
+      <section className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-[1fr_280px]">
         <div className="card p-5">
           <p className="label">Itens</p>
           <ul className="divide-y divide-line">

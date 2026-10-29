@@ -25,7 +25,7 @@ export default function AdminLayout() {
         <p className="font-mono text-xs text-ash">{user?.email}</p>
       </div>
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-        <nav className="-mx-4 flex gap-1 overflow-x-auto px-4 lg:sticky lg:top-32 lg:mx-0 lg:w-52 lg:shrink-0 lg:flex-col lg:px-0">
+        <nav className="flex flex-wrap gap-1 lg:sticky lg:top-32 lg:w-52 lg:shrink-0 lg:flex-col lg:flex-nowrap">
           {NAV.map((item) => (
             <NavLink
               key={item.to}

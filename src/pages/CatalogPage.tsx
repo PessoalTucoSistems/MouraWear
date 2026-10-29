@@ -109,7 +109,7 @@ export default function CatalogPage() {
           </label>
         </div>
 
-        <div className="-mx-4 mb-8 flex gap-2 overflow-x-auto px-4 pb-2">
+        <div className="mb-8 flex flex-wrap gap-2">
           <button className={chip(!category)} onClick={() => setFilter("")}>[ Todos ]</button>
           {categories.map((c) => (
             <button key={c.id} className={chip(category === c.name)} onClick={() => setFilter(c.name)}>

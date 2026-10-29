@@ -101,7 +101,7 @@ export default function CheckoutPage() {
   ];
 
   return (
-    <form onSubmit={submit} className="mx-auto grid max-w-7xl gap-10 px-4 py-10 lg:grid-cols-[1fr_400px]">
+    <form onSubmit={submit} className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-10 lg:grid-cols-[1fr_400px]">
       <div className="flex flex-col gap-10">
         <h1 className="display text-6xl md:text-7xl">Checkout</h1>
 

@@ -61,7 +61,7 @@ function ProductForm({ initial, onClose, onSaved }: { initial: Draft; onClose: (
 
   return (
     <Modal title={draft.id ? "Editar produto" : "Novo produto"} onClose={onClose} wide>
-      <form onSubmit={submit} className="grid gap-4 md:grid-cols-2">
+      <form onSubmit={submit} className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="md:col-span-2">
           <label className="label" htmlFor="p-name">Nome</label>
           <input id="p-name" className="input" required value={draft.name} onChange={(e) => set("name", e.target.value)} />
@@ -207,7 +207,7 @@ export default function ProductsPage() {
       </div>
 
       <div className="card overflow-x-auto">
-        <table className="w-full min-w-[640px] text-sm">
+        <table className="rtable w-full text-sm md:min-w-[640px]">
           <thead className="border-b border-line font-mono text-[10px] uppercase tracking-widest text-ash">
             <tr>
               <th className="p-3 text-left">Produto</th>
@@ -231,17 +231,17 @@ export default function ProductsPage() {
                     </div>
                   </div>
                 </td>
-                <td className="p-3 font-mono">{money(p.price)}</td>
-                <td className="p-3 font-mono text-xs">
+                <td className="p-3 font-mono" data-label="Preço">{money(p.price)}</td>
+                <td className="p-3 font-mono text-xs" data-label="Estoque">
                   <span className={totalStock(p.sizes) === 0 ? "text-blood" : ""}>{totalStock(p.sizes)} un</span>
                   <p className="text-ash">{p.sizes.map((s) => `${s.size}:${s.stock}`).join(" ")}</p>
                 </td>
-                <td className="p-3">
+                <td className="p-3" data-label="Status">
                   <button onClick={() => toggleActive(p)} className={`tag ${p.active ? "bg-acid text-ink" : "bg-coal text-ash"}`}>
                     {p.active ? "Ativo" : "Oculto"}
                   </button>
                 </td>
-                <td className="p-3 text-right whitespace-nowrap">
+                <td className="rtable-actions p-3 text-right whitespace-nowrap">
                   <button className="mr-3 font-mono text-xs uppercase hover:text-acid" onClick={() => setEditing(p)}>Editar</button>
                   <button className="font-mono text-xs uppercase text-blood" onClick={() => remove(p)}>Excluir</button>
                 </td>

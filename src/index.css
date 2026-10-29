@@ -17,6 +17,8 @@
 
 html {
   background: var(--color-ink);
+  /* Rede de segurança: nada empurra a página para os lados no celular. */
+  overflow-x: clip;
   color: var(--color-bone);
   -webkit-font-smoothing: antialiased;
 }
@@ -24,6 +26,17 @@ html {
 body {
   font-family: var(--font-sans);
   min-height: 100vh;
+  overflow-x: clip;
+  overflow-wrap: break-word;
+}
+
+/* iOS dá zoom ao focar campos com fonte < 16px, o que "estoura" a tela. */
+@media (max-width: 767px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
 }
 
 ::selection {
@@ -48,6 +61,7 @@ body::after {
     text-transform: uppercase;
     letter-spacing: 0.01em;
     line-height: 0.9;
+    overflow-wrap: anywhere;
   }
 
   .text-outline {
@@ -146,6 +160,49 @@ body::after {
   .card {
     background: var(--color-smoke);
     border: 1px solid var(--color-line);
+  }
+
+  /* Tabelas do admin: no celular cada linha vira um cartão, com todas as ações à vista. */
+  @media (max-width: 767px) {
+    .rtable thead {
+      display: none;
+    }
+    .rtable tr {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem 1rem;
+      padding: 0.75rem;
+    }
+    .rtable td {
+      display: block;
+      padding: 0 !important;
+      text-align: left !important;
+    }
+    .rtable td:first-child {
+      flex-basis: 100%;
+    }
+    .rtable td[data-label]::before {
+      content: attr(data-label);
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--color-ash);
+    }
+    .rtable td.rtable-actions {
+      flex-basis: 100%;
+      display: flex;
+      gap: 0.5rem;
+    }
+    .rtable td.rtable-actions > * {
+      flex: 1;
+      margin: 0 !important;
+      border: 1px solid var(--color-line);
+      padding: 0.6rem;
+      text-align: center;
+    }
   }
 }
 

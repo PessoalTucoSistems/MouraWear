@@ -25,13 +25,13 @@ export default function Header() {
     navigate(term.trim() ? `/?q=${encodeURIComponent(term.trim())}` : "/");
   };
 
-  const iconBtn = "relative grid h-10 w-10 place-items-center border border-transparent transition hover:border-line hover:text-acid";
+  const iconBtn = "relative grid h-9 w-9 shrink-0 place-items-center sm:h-10 sm:w-10 border border-transparent transition hover:border-line hover:text-acid";
 
   return (
     <header className="sticky top-0 z-40">
       <AnnouncementBar />
       <div className="border-b border-line bg-ink/85 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4">
+        <div className="mx-auto flex h-16 max-w-7xl items-center gap-2 px-3 sm:gap-4 sm:px-4">
           <button className={`${iconBtn} lg:hidden`} onClick={() => setMenuOpen(true)} aria-label="Abrir menu">
             <MenuIcon />
           </button>
@@ -48,7 +48,7 @@ export default function Header() {
             ))}
           </nav>
 
-          <div className="ml-auto flex items-center gap-1">
+          <div className="ml-auto flex shrink-0 items-center sm:gap-1">
             <button className={iconBtn} onClick={() => setSearchOpen((v) => !v)} aria-label="Buscar">
               <SearchIcon />
             </button>
@@ -62,7 +62,7 @@ export default function Header() {
             <button className={iconBtn} onClick={open} aria-label={`Carrinho com ${count} itens`}>
               <BagIcon />
               {count > 0 && (
-                <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center bg-acid px-1 font-mono text-[10px] font-bold text-ink">
+                <span className="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 place-items-center bg-acid px-1 font-mono text-[10px] font-bold text-ink">
                   {count}
                 </span>
               )}
@@ -72,16 +72,16 @@ export default function Header() {
 
         {searchOpen && (
           <form onSubmit={submitSearch} className="animate-rise border-t border-line">
-            <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
-              <SearchIcon className="h-5 w-5 text-ash" />
+            <div className="mx-auto flex max-w-7xl items-center gap-3 px-3 py-3 sm:px-4">
+              <SearchIcon className="h-5 w-5 shrink-0 text-ash" />
               <input
                 autoFocus
                 value={term}
                 onChange={(e) => setTerm(e.target.value)}
                 placeholder="Buscar peças, coleções..."
-                className="w-full bg-transparent font-mono text-sm uppercase tracking-wider outline-none placeholder:text-ash"
+                className="min-w-0 flex-1 bg-transparent font-mono text-sm uppercase tracking-wider outline-none placeholder:text-ash"
               />
-              <button type="submit" className="btn btn-acid !py-2">Buscar</button>
+              <button type="submit" className="btn btn-acid shrink-0 !px-3 !py-2 sm:!px-6">Buscar</button>
             </div>
           </form>
         )}

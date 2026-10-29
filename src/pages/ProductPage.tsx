@@ -75,7 +75,7 @@ export default function ProductPage() {
         <span className="text-bone">{product.name}</span>
       </nav>
 
-      <div className="grid gap-10 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div>
           <div className="relative aspect-[4/5] overflow-hidden border border-line bg-smoke">
             {product.images.length ? (

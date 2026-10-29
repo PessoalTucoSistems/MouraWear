@@ -40,13 +40,14 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
   });
 
   return (
-    <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 md:grid-cols-2 md:py-20">
-      <div className="hidden flex-col justify-between border-2 border-bone bg-acid p-8 text-ink md:flex">
-        <p className="font-mono text-xs uppercase tracking-[0.3em]">MouraWear club</p>
-        <p className="display text-8xl">
+    <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-4 py-12 md:grid-cols-2 md:py-20">
+      <div className="relative hidden flex-col justify-between overflow-hidden border-2 border-bone bg-acid p-8 text-ink md:flex">
+        <img src="/mascote.webp" alt="" className="pointer-events-none absolute -bottom-2 -right-8 h-[92%] max-w-none select-none lg:right-0" />
+        <p className="relative font-mono text-xs uppercase tracking-[0.3em]">MouraWear club</p>
+        <p className="display relative text-8xl">
           Join<br />the<br />crew.
         </p>
-        <p className="max-w-xs text-sm">Acompanhe seus pedidos, salve seus dados de entrega e fique por dentro dos próximos drops.</p>
+        <p className="relative max-w-[12rem] text-sm lg:max-w-[14rem]">Acompanhe seus pedidos, salve seus dados de entrega e fique por dentro dos próximos drops.</p>
       </div>
 
       <div>

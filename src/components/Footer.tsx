@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useStore } from "../context/StoreContext";
 import { whatsappLink } from "../lib/format";
+import { Crown } from "./Logo";
 
 export default function Footer() {
   const { settings, categories } = useStore();
@@ -13,8 +14,9 @@ export default function Footer() {
           MOURAWEAR ✦ STREET CULTURE ✦ MOURAWEAR ✦ STREET CULTURE ✦&nbsp;
         </p>
       </div>
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 md:grid-cols-4">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-12 md:grid-cols-4">
         <div className="md:col-span-2">
+          <Crown className="mb-4 h-12 w-14 text-acid" />
           <p className="display text-4xl">Feito na rua.<br /><span className="text-acid">Vestido por você.</span></p>
           <p className="mt-4 max-w-sm text-sm text-ash">Streetwear com modelagem oversized, tecidos pesados e drops em quantidade limitada.</p>
         </div>

@@ -31,7 +31,7 @@ function BannerForm({ initial, onClose, onSaved }: { initial: Draft; onClose: ()
 
   return (
     <Modal title={draft.id ? "Editar banner" : "Novo banner"} onClose={onClose} wide>
-      <form onSubmit={submit} className="grid gap-4 md:grid-cols-2">
+      <form onSubmit={submit} className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="md:col-span-2">
           <p className="label">Imagem (ideal 1920×900, horizontal)</p>
           {draft.image && <img src={draft.image} alt="" className="mb-3 aspect-[21/9] w-full border border-line object-cover" />}
@@ -103,7 +103,7 @@ export default function BannersPage() {
           + Novo banner
         </button>
       </div>
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {banners.map((b) => (
           <div key={b.id} className={`card overflow-hidden ${b.active ? "" : "opacity-50"}`}>
             <div className="relative aspect-[21/9]">

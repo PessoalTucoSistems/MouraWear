@@ -71,7 +71,7 @@ export interface Address {
 }
 
 export type OrderStatus = "pending" | "paid" | "shipped" | "delivered" | "canceled";
-export type PaymentMethod = "pix" | "whatsapp" | "mercadopago";
+export type PaymentMethod = "pix" | "whatsapp" | "mercadopago" | "sumup";
 
 export interface OrderItem {
   productId: string;
@@ -96,6 +96,8 @@ export interface Order {
   paymentMethod: PaymentMethod;
   status: OrderStatus;
   paymentUrl: string | null;
+  /** PIX copia e cola da SumUp, enquanto o pedido está pendente. */
+  pixCode: string | null;
   notes: string;
   /** Prazo da reserva de estoque dos pedidos via WhatsApp (só enquanto pendente). */
   expiresAt: string | null;
@@ -113,4 +115,6 @@ export interface StoreSettings {
   shippingFee: number;
   freeShippingMin: number;
   mercadoPagoEnabled: boolean;
+  /** Serviço do botão "Pagar online" (definido pelas variáveis do Render). */
+  onlinePayment: "sumup" | "mercadopago" | null;
 }

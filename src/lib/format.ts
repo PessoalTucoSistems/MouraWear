@@ -26,6 +26,7 @@ export const PAYMENT_LABEL: Record<PaymentMethod, string> = {
   pix: "PIX",
   whatsapp: "Pedido pelo WhatsApp",
   mercadopago: "Cartão / PIX online",
+  sumup: "Online (PIX ou cartão)",
 };
 
 export const onlyDigits = (value: string) => value.replace(/\D/g, "");

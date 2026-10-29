@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { Loading } from "../components/Guards";
 import { WhatsappIcon } from "../components/Icons";
+import SumupPayment from "../components/SumupPayment";
 import { useCart } from "../context/CartContext";
 import { useStore } from "../context/StoreContext";
 import { useToast } from "../context/ToastContext";
@@ -121,6 +122,22 @@ export function OrderDetailPage() {
     }
   }, [order?.id, order?.cancelReason]);
 
+  // Pagamento online (SumUp): consulta o status a cada 6 s enquanto o pedido estiver pendente.
+  const watching = order?.status === "pending" && order.paymentMethod === "sumup";
+  useEffect(() => {
+    if (!watching) return;
+    const timer = setInterval(() => {
+      api<Order>(`/orders/${id}`)
+        .then((fresh) => {
+          // Enquanto este efeito roda o pedido está pendente; ao virar "pago" o intervalo para.
+          if (fresh.status === "paid") toast("Pagamento aprovado! Obrigado pela compra.");
+          setOrder(fresh);
+        })
+        .catch(() => {});
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [watching, id, toast]);
+
   if (error) return <p className="mx-auto max-w-3xl px-4 py-20 text-center text-blood">{error}</p>;
   if (!order) return <Loading />;
 
@@ -221,6 +238,7 @@ export function OrderDetailPage() {
               <p className="text-sm text-ash">Em breve entraremos em contato com os dados para pagamento.</p>
             )
           )}
+          {order.paymentMethod === "sumup" && <SumupPayment order={order} onChange={setOrder} />}
           {order.paymentMethod === "mercadopago" && order.paymentUrl && (
             <a href={order.paymentUrl} className="btn btn-acid">Pagar agora</a>
           )}

@@ -108,7 +108,7 @@ export default function CheckoutPage() {
   }
 
   const canWhatsapp = !!settings.whatsapp;
-  const canPayOnline = settings.mercadoPagoEnabled;
+  const canPayOnline = !!settings.onlinePayment;
 
   return (
     <form onSubmit={submit} className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-10 lg:grid-cols-[1fr_400px]">
@@ -167,7 +167,9 @@ export default function CheckoutPage() {
             {canPayOnline && (
               <div className="border-2 border-line p-4">
                 <p className="font-semibold uppercase">Pagar online</p>
-                <p className="mt-1 text-sm text-ash">Cartão ou PIX pelo Mercado Pago, com pagamento seguro e confirmação na hora.</p>
+                <p className="mt-1 text-sm text-ash">
+                  PIX ou cartão {settings.onlinePayment === "sumup" ? "pela SumUp" : "pelo Mercado Pago"}, com pagamento seguro e confirmação na hora.
+                </p>
               </div>
             )}
           </div>
@@ -208,7 +210,7 @@ export default function CheckoutPage() {
             </button>
           )}
           {canPayOnline && (
-            <button type="submit" name="payment" value="mercadopago" className={`btn w-full ${canWhatsapp ? "btn-ghost" : "btn-acid"}`} disabled={submitting}>
+            <button type="submit" name="payment" value={settings.onlinePayment || ""} className={`btn w-full ${canWhatsapp ? "btn-ghost" : "btn-acid"}`} disabled={submitting}>
               {submitting ? "Enviando..." : "Pagar online"}
             </button>
           )}

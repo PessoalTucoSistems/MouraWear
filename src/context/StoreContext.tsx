@@ -10,6 +10,7 @@ const DEFAULT_SETTINGS: StoreSettings = {
   shippingFee: 0,
   freeShippingMin: 0,
   mercadoPagoEnabled: false,
+  onlinePayment: null,
 };
 
 interface StoreContextValue {

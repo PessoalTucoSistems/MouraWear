@@ -1,0 +1,180 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #0a0a0a;
+  --color-smoke: #141414;
+  --color-coal: #1d1d1d;
+  --color-line: #2b2b2b;
+  --color-ash: #8c8a84;
+  --color-bone: #f1efe9;
+  --color-acid: #c8ff00;
+  --color-blood: #ff3b30;
+
+  --font-display: "Anton", "Impact", sans-serif;
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+html {
+  background: var(--color-ink);
+  color: var(--color-bone);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--font-sans);
+  min-height: 100vh;
+}
+
+::selection {
+  background: var(--color-acid);
+  color: var(--color-ink);
+}
+
+/* Granulado sutil por cima da página inteira — textura de xerox/zine. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+@layer components {
+  .display {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    line-height: 0.9;
+  }
+
+  .text-outline {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--color-bone);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border: 2px solid var(--color-bone);
+    transition: transform 0.12s, box-shadow 0.12s, background 0.12s, color 0.12s;
+    cursor: pointer;
+  }
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .btn-acid {
+    background: var(--color-acid);
+    color: var(--color-ink);
+    border-color: var(--color-acid);
+    box-shadow: 4px 4px 0 var(--color-bone);
+  }
+  .btn-acid:not(:disabled):hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--color-bone);
+  }
+  .btn-acid:not(:disabled):active {
+    transform: translate(2px, 2px);
+    box-shadow: 0 0 0 var(--color-bone);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--color-bone);
+  }
+  .btn-ghost:not(:disabled):hover {
+    background: var(--color-bone);
+    color: var(--color-ink);
+  }
+  .btn-danger {
+    background: transparent;
+    color: var(--color-blood);
+    border-color: var(--color-blood);
+  }
+  .btn-danger:not(:disabled):hover {
+    background: var(--color-blood);
+    color: var(--color-ink);
+  }
+
+  .input {
+    width: 100%;
+    background: var(--color-smoke);
+    border: 1px solid var(--color-line);
+    color: var(--color-bone);
+    padding: 0.8rem 1rem;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .input:focus {
+    border-color: var(--color-acid);
+  }
+  .input::placeholder {
+    color: var(--color-ash);
+  }
+
+  .label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-ash);
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .card {
+    background: var(--color-smoke);
+    border: 1px solid var(--color-line);
+  }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+.animate-slide-in {
+  animation: slide-in-right 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-rise {
+  animation: rise 0.45s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee, .animate-slide-in, .animate-rise {
+    animation: none;
+  }
+}

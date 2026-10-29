@@ -12,9 +12,9 @@ export function Crown({ className = "" }: { className?: string }) {
 
 export default function Logo({ className = "" }: { className?: string }) {
   return (
-    <Link to="/" className={`display inline-flex min-w-0 shrink items-center whitespace-nowrap text-xl sm:text-2xl md:text-3xl ${className}`} aria-label="MouraWear — início">
+    <Link to="/" className={`display inline-flex min-w-0 shrink items-center whitespace-nowrap text-lg min-[360px]:text-xl sm:text-2xl md:text-3xl ${className}`} aria-label="MoreiraWear — início">
       <Crown className="mr-1.5 h-[1.05em] w-[1.1em] shrink-0 -translate-y-[0.06em] text-acid" />
-      <span>MOURA</span>
+      <span>MOREIRA</span>
       <span className="mx-0.5 text-acid">/</span>
       <span className="text-outline">WEAR</span>
     </Link>

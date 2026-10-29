@@ -15,7 +15,7 @@ interface Settings {
 const FIELDS: { key: keyof Settings; label: string; hint?: string; type?: string }[] = [
   { key: "announcement", label: "Faixa de anúncio (topo do site)", hint: "Use ✦ para separar as mensagens. Vazio esconde a faixa." },
   { key: "whatsapp", label: "WhatsApp da loja", hint: "Com DDD, ex.: 11999999999. Habilita a opção \"Combinar no WhatsApp\"." },
-  { key: "instagram", label: "Instagram", hint: "Ex.: @mourawear" },
+  { key: "instagram", label: "Instagram", hint: "Ex.: @moreira_wear" },
   { key: "pixKey", label: "Chave PIX", hint: "Mostrada ao cliente após o pedido com pagamento via PIX." },
   { key: "shippingFee", label: "Frete fixo (R$)", type: "number" },
   { key: "freeShippingMin", label: "Frete grátis a partir de (R$)", hint: "0 desativa o frete grátis.", type: "number" },

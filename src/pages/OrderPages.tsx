@@ -67,7 +67,7 @@ export function OrderDetailPage() {
 
   const isNew = params.get("novo") === "1";
   const step = STEPS.indexOf(order.status);
-  const message = `Olá! Fiz o pedido #${order.id} na MouraWear (total ${money(order.total)}).`;
+  const message = `Olá! Fiz o pedido #${order.id} na MoreiraWear (total ${money(order.total)}).`;
 
   const cancel = async () => {
     if (!window.confirm("Cancelar este pedido?")) return;
@@ -93,7 +93,7 @@ export function OrderDetailPage() {
       {isNew && (
         <div className="animate-rise mb-8 border-2 border-acid bg-acid p-6 text-ink">
           <p className="display text-5xl">Pedido recebido!</p>
-          <p className="mt-1 text-sm">Obrigado por comprar na MouraWear. Siga as instruções de pagamento abaixo.</p>
+          <p className="mt-1 text-sm">Obrigado por comprar na MoreiraWear. Siga as instruções de pagamento abaixo.</p>
         </div>
       )}
 

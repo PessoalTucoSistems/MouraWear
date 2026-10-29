@@ -11,7 +11,7 @@ export default function Footer() {
     <footer className="mt-24 border-t-2 border-bone">
       <div className="overflow-hidden border-b border-line py-6">
         <p className="display animate-marquee w-max whitespace-nowrap text-[18vw] leading-none text-outline md:text-[11vw]">
-          MOURAWEAR ✦ STREET CULTURE ✦ MOURAWEAR ✦ STREET CULTURE ✦&nbsp;
+          MOREIRAWEAR ✦ STREET CULTURE ✦ MOREIRAWEAR ✦ STREET CULTURE ✦&nbsp;
         </p>
       </div>
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-12 md:grid-cols-4">
@@ -36,7 +36,7 @@ export default function Footer() {
             <li><Link to="/pedidos" className="hover:text-acid">Meus pedidos</Link></li>
             <li><Link to="/conta" className="hover:text-acid">Minha conta</Link></li>
             {settings.whatsapp && (
-              <li><a href={whatsappLink(settings.whatsapp, "Olá, MouraWear!")} target="_blank" rel="noreferrer" className="hover:text-acid">WhatsApp</a></li>
+              <li><a href={whatsappLink(settings.whatsapp, "Olá, MoreiraWear!")} target="_blank" rel="noreferrer" className="hover:text-acid">WhatsApp</a></li>
             )}
             {instagram && (
               <li><a href={`https://instagram.com/${instagram}`} target="_blank" rel="noreferrer" className="hover:text-acid">@{instagram}</a></li>
@@ -45,7 +45,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="border-t border-line px-4 py-5 text-center font-mono text-[11px] uppercase tracking-widest text-ash">
-        © {new Date().getFullYear()} MouraWear — todos os direitos reservados
+        © {new Date().getFullYear()} MoreiraWear — todos os direitos reservados
       </div>
     </footer>
   );

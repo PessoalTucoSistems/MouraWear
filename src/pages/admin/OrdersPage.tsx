@@ -54,7 +54,7 @@ function OrderModal({ order, onClose, onChange }: { order: Order; onClose: () =>
           <p className="font-semibold">{order.customerName}</p>
           <p className="text-ash">{order.customerEmail}</p>
           {phone && (
-            <a href={whatsappLink(phone, `Olá ${order.customerName.split(" ")[0]}! Sobre seu pedido #${order.id} na MouraWear:`)} target="_blank" rel="noreferrer" className="text-acid underline">
+            <a href={whatsappLink(phone, `Olá ${order.customerName.split(" ")[0]}! Sobre seu pedido #${order.id} na MoreiraWear:`)} target="_blank" rel="noreferrer" className="text-acid underline">
               {phone} (WhatsApp)
             </a>
           )}

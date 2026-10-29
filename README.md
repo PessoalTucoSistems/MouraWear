@@ -1,4 +1,4 @@
-# MouraWear — Frontend
+# MoreiraWear — Frontend
 
 Loja streetwear em React + Vite + Tailwind v4.
 
@@ -16,4 +16,4 @@ npm run dev            # http://localhost:5173
 
 ## Deploy na Vercel
 Importe o repositório (framework Vite). A URL do backend (`https://backendmourawear.onrender.com`) já é o padrão em produção; `VITE_API_URL` é opcional e só serve para apontar para outro backend.
-Admin: `mourawear@admin.com` / senha definida em `ADMIN_PASSWORD` no Render (padrão `12345678`).
+Admin: `moreirawear@admin.com` / senha definida em `ADMIN_PASSWORD` no Render (padrão `12345678`).

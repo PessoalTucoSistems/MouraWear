@@ -6,7 +6,7 @@ import { api } from "../../lib/api";
 import { dateTime } from "../../lib/format";
 import type { Role, User } from "../../types";
 
-const MAIN_ADMIN = "mourawear@admin.com";
+const MAIN_ADMIN = "moreirawear@admin.com";
 
 interface Draft {
   id?: string;

@@ -43,7 +43,7 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
     <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-4 py-12 md:grid-cols-2 md:py-20">
       <div className="relative hidden flex-col justify-between overflow-hidden border-2 border-bone bg-acid p-8 text-ink md:flex">
         <img src="/mascote.webp" alt="" className="pointer-events-none absolute -bottom-2 -right-8 h-[92%] max-w-none select-none lg:right-0" />
-        <p className="relative font-mono text-xs uppercase tracking-[0.3em]">MouraWear club</p>
+        <p className="relative font-mono text-xs uppercase tracking-[0.3em]">MoreiraWear club</p>
         <p className="display relative text-8xl">
           Join<br />the<br />crew.
         </p>

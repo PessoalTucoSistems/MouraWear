@@ -20,7 +20,7 @@ export default function AdminLayout() {
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="font-mono text-xs uppercase tracking-widest text-acid">Admin</p>
-          <h1 className="display text-5xl">Painel MouraWear</h1>
+          <h1 className="display text-4xl sm:text-5xl">Painel MoreiraWear</h1>
         </div>
         <p className="font-mono text-xs text-ash">{user?.email}</p>
       </div>

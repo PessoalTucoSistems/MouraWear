@@ -11,12 +11,12 @@ function DefaultHero() {
       <img
         src="/mascote.webp"
         alt=""
-        className="pointer-events-none absolute -right-6 bottom-0 h-[78%] max-w-none select-none opacity-90 sm:right-0 md:right-[4%] md:h-[96%] md:opacity-100 lg:right-[8%]"
+        className="pointer-events-none absolute -right-10 bottom-0 h-[74%] max-w-none select-none opacity-90 sm:right-0 md:right-[2%] md:h-[92%] md:opacity-100 lg:right-[8%]"
       />
       <div className="relative mx-auto max-w-7xl px-4 py-16 md:py-24">
         <p className="font-mono text-xs uppercase tracking-[0.3em] text-acid">Drop 01 — disponível agora</p>
-        <h1 className="display mt-4 text-[22vw] md:text-[9.5rem] lg:text-[12rem] xl:text-[13rem]">
-          Moura<br />
+        <h1 className="display mt-4 text-[16vw] md:text-[7rem] lg:text-[9.5rem] xl:text-[12rem]">
+          Moreira<br />
           <span className="text-outline">Wear</span>
         </h1>
         <div className="mt-8 flex flex-wrap items-center gap-6">

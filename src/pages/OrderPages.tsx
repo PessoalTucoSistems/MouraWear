@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { Loading } from "../components/Guards";
 import { WhatsappIcon } from "../components/Icons";
-import SumupPayment from "../components/SumupPayment";
+import OnlinePayment from "../components/OnlinePayment";
 import { useCart } from "../context/CartContext";
 import { useStore } from "../context/StoreContext";
 import { useToast } from "../context/ToastContext";
@@ -119,20 +119,35 @@ export function OrderDetailPage() {
     }
   }, [order?.id, order?.cancelReason]);
 
-  // Pagamento online (SumUp / Mercado Pago): consulta o status a cada 6 s enquanto o pedido estiver pendente.
+  // Pagamento online (SumUp / Mercado Pago): consulta o status a cada 3 s enquanto o pedido estiver
+  // pendente, e na hora em que o cliente volta para esta aba (ex.: depois de pagar o cartão na outra).
   const watching = order?.status === "pending" && (order.paymentMethod === "sumup" || order.paymentMethod === "mercadopago");
   useEffect(() => {
     if (!watching) return;
-    const timer = setInterval(() => {
+    let busy = false;
+    const check = () => {
+      if (busy) return;
+      busy = true;
       api<Order>(`/orders/${id}`)
         .then((fresh) => {
-          // Enquanto este efeito roda o pedido está pendente; ao virar "pago" o intervalo para.
+          // Enquanto este efeito roda o pedido está pendente; ao virar "pago" a consulta para.
           if (fresh.status === "paid") toast("Pagamento aprovado! Obrigado pela compra.");
-          setOrder(fresh);
+          setOrder((prev) => (prev && prev.status === fresh.status && prev.pixCode === fresh.pixCode && prev.paymentUrl === fresh.paymentUrl ? prev : fresh));
         })
-        .catch(() => {});
-    }, 6000);
-    return () => clearInterval(timer);
+        .catch(() => {})
+        .finally(() => {
+          busy = false;
+        });
+    };
+    const timer = setInterval(check, 3000);
+    const onFocus = () => document.visibilityState === "visible" && check();
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onFocus);
+    return () => {
+      clearInterval(timer);
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onFocus);
+    };
   }, [watching, id, toast]);
 
   if (error) return <p className="mx-auto max-w-3xl px-4 py-20 text-center text-blood">{error}</p>;
@@ -235,16 +250,8 @@ export function OrderDetailPage() {
               <p className="text-sm text-ash">Em breve entraremos em contato com os dados para pagamento.</p>
             )
           )}
-          {order.paymentMethod === "sumup" && <SumupPayment order={order} onChange={setOrder} />}
-          {order.paymentMethod === "mercadopago" && order.status === "pending" && (
-            order.paymentUrl ? (
-              <>
-                <p className="mb-3 text-sm text-ash">PIX, cartão ou saldo pelo Mercado Pago. A confirmação aparece aqui sozinha.</p>
-                <a href={order.paymentUrl} className="btn btn-acid">Pagar agora</a>
-              </>
-            ) : (
-              <p className="text-sm text-ash">Gerando o link de pagamento… se não aparecer em instantes, fale com a loja.</p>
-            )
+          {(order.paymentMethod === "sumup" || order.paymentMethod === "mercadopago") && (
+            <OnlinePayment order={order} onChange={setOrder} />
           )}
           {(order.paymentMethod === "sumup" || order.paymentMethod === "mercadopago") && order.expiresAt && (
             <p className="mt-4 border-t border-line pt-3 text-xs text-ash">

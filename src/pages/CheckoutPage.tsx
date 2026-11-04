@@ -166,7 +166,7 @@ export default function CheckoutPage() {
               <div className="border-2 border-line p-4">
                 <p className="font-semibold uppercase">Pagar online</p>
                 <p className="mt-1 text-sm text-ash">
-                  PIX ou cartão {settings.onlinePayment === "sumup" ? "pela SumUp" : "pelo Mercado Pago"}, com confirmação na hora. Você tem {ONLINE_HOLD} para pagar.
+                  PIX com QR Code aqui no site ou cartão {settings.onlinePayment === "sumup" ? "pela SumUp" : "pelo Mercado Pago"}, com confirmação na hora. Você tem {ONLINE_HOLD} para pagar.
                 </p>
               </div>
             )}

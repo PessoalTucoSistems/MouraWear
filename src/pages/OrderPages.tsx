@@ -119,8 +119,8 @@ export function OrderDetailPage() {
     }
   }, [order?.id, order?.cancelReason]);
 
-  // Pagamento online (SumUp): consulta o status a cada 6 s enquanto o pedido estiver pendente.
-  const watching = order?.status === "pending" && order.paymentMethod === "sumup";
+  // Pagamento online (SumUp / Mercado Pago): consulta o status a cada 6 s enquanto o pedido estiver pendente.
+  const watching = order?.status === "pending" && (order.paymentMethod === "sumup" || order.paymentMethod === "mercadopago");
   useEffect(() => {
     if (!watching) return;
     const timer = setInterval(() => {
@@ -236,8 +236,15 @@ export function OrderDetailPage() {
             )
           )}
           {order.paymentMethod === "sumup" && <SumupPayment order={order} onChange={setOrder} />}
-          {order.paymentMethod === "mercadopago" && order.paymentUrl && (
-            <a href={order.paymentUrl} className="btn btn-acid">Pagar agora</a>
+          {order.paymentMethod === "mercadopago" && order.status === "pending" && (
+            order.paymentUrl ? (
+              <>
+                <p className="mb-3 text-sm text-ash">PIX, cartão ou saldo pelo Mercado Pago. A confirmação aparece aqui sozinha.</p>
+                <a href={order.paymentUrl} className="btn btn-acid">Pagar agora</a>
+              </>
+            ) : (
+              <p className="text-sm text-ash">Gerando o link de pagamento… se não aparecer em instantes, fale com a loja.</p>
+            )
           )}
           {(order.paymentMethod === "sumup" || order.paymentMethod === "mercadopago") && order.expiresAt && (
             <p className="mt-4 border-t border-line pt-3 text-xs text-ash">

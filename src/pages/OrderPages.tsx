@@ -7,7 +7,7 @@ import { useCart } from "../context/CartContext";
 import { useStore } from "../context/StoreContext";
 import { useToast } from "../context/ToastContext";
 import { api } from "../lib/api";
-import { dateTime, expiredText, money, PAYMENT_LABEL, STATUS_LABEL, STATUS_STYLE, time, whatsappLink, whatsappOrderMessage } from "../lib/format";
+import { dateTime, expiredText, money, PAYMENT_LABEL, shippingSummary, STATUS_LABEL, STATUS_STYLE, time, whatsappLink, whatsappOrderMessage } from "../lib/format";
 import type { Order, OrderStatus, Product } from "../types";
 
 
@@ -289,16 +289,26 @@ export function OrderDetailPage() {
           </ul>
           <div className="mt-3 space-y-1 border-t border-line pt-3 font-mono text-sm">
             <div className="flex justify-between text-ash"><span>Subtotal</span><span>{money(order.subtotal)}</span></div>
-            <div className="flex justify-between text-ash"><span>Frete</span><span>{order.shipping ? money(order.shipping) : "Grátis"}</span></div>
+            <div className="flex justify-between text-ash">
+              <span>{order.shippingMethod === "pickup" ? "Retirada" : "Frete"}</span>
+              <span>{order.shippingMethod === "pickup" ? "Sem custo" : order.shipping ? money(order.shipping) : "Grátis"}</span>
+            </div>
             <div className="flex justify-between text-lg"><span>Total</span><span className="text-acid">{money(order.total)}</span></div>
           </div>
         </div>
         <div className="card h-fit p-5 text-sm">
           <p className="label">Entrega</p>
-          <p>{order.address.street}, {order.address.number}{order.address.complement ? ` — ${order.address.complement}` : ""}</p>
-          {order.address.district && <p>{order.address.district}</p>}
-          <p>{order.address.city}/{order.address.state}</p>
-          <p className="font-mono text-ash">CEP {order.address.cep}</p>
+          <p className="mb-2 font-semibold uppercase text-acid">{shippingSummary(order)}</p>
+          {order.shippingMethod === "pickup" ? (
+            <p className="text-ash">{settings.pickupAddress || "Combinamos o local e o horário da retirada pelo WhatsApp."}</p>
+          ) : (
+            <>
+              <p>{order.address.street}, {order.address.number}{order.address.complement ? ` — ${order.address.complement}` : ""}</p>
+              {order.address.district && <p>{order.address.district}</p>}
+              <p>{order.address.city}/{order.address.state}</p>
+              <p className="font-mono text-ash">CEP {order.address.cep}</p>
+            </>
+          )}
           {order.notes && (
             <>
               <p className="label mt-4">Observações</p>

@@ -72,6 +72,23 @@ export interface Address {
 
 export type OrderStatus = "pending" | "paid" | "shipped" | "delivered" | "canceled";
 export type PaymentMethod = "pix" | "whatsapp" | "mercadopago" | "sumup";
+/** pickup = retirar em mãos; pac/sedex = Correios; fixed = frete fixo (sem cotação configurada). */
+export type ShippingMethod = "pickup" | "pac" | "sedex" | "fixed";
+
+export interface ShippingOption {
+  method: ShippingMethod;
+  label: string;
+  price: number;
+  /** Prazo dos Correios em dias úteis. */
+  days: number | null;
+  free?: boolean;
+}
+
+export interface ShippingQuote {
+  options: ShippingOption[];
+  error: string | null;
+  pickupAddress: string;
+}
 
 export interface OrderItem {
   productId: string;
@@ -91,6 +108,8 @@ export interface Order {
   items: OrderItem[];
   subtotal: number;
   shipping: number;
+  shippingMethod: ShippingMethod;
+  shippingDays: number | null;
   total: number;
   address: Address;
   paymentMethod: PaymentMethod;
@@ -117,4 +136,7 @@ export interface StoreSettings {
   mercadoPagoEnabled: boolean;
   /** Serviço do botão "Pagar online" (definido pelas variáveis do Render). */
   onlinePayment: "sumup" | "mercadopago" | null;
+  /** Cotação PAC/SEDEX ativa (MELHOR_ENVIO_TOKEN no Render). */
+  correiosEnabled: boolean;
+  pickupAddress: string;
 }

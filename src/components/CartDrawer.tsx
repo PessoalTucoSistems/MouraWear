@@ -26,7 +26,9 @@ export default function CartDrawer() {
 
   const missing = settings.freeShippingMin - subtotal;
   const progress = settings.freeShippingMin > 0 ? Math.min(100, (subtotal / settings.freeShippingMin) * 100) : 100;
-  const shipping = shippingFor(subtotal, settings);
+  // Com os Correios ativos o frete depende do CEP e é cotado no checkout.
+  const quoted = settings.correiosEnabled;
+  const shipping = quoted ? 0 : shippingFor(subtotal, settings);
 
   return (
     <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="Carrinho">
@@ -43,9 +45,9 @@ export default function CartDrawer() {
           <div className="border-b border-line px-5 py-3">
             <p className="font-mono text-[11px] uppercase tracking-wider">
               {missing > 0 ? (
-                <>Faltam <span className="text-acid">{money(missing)}</span> para o frete grátis</>
+                <>Faltam <span className="text-acid">{money(missing)}</span> para o frete grátis{quoted && " no PAC"}</>
               ) : (
-                <span className="text-acid">Você ganhou frete grátis ✦</span>
+                <span className="text-acid">Você ganhou frete grátis{quoted && " no PAC"} ✦</span>
               )}
             </p>
             <div className="mt-2 h-1.5 bg-coal">
@@ -110,7 +112,7 @@ export default function CartDrawer() {
             </div>
             <div className="mt-1 flex justify-between font-mono text-sm text-ash">
               <span>Frete</span>
-              <span>{shipping === 0 ? "Grátis" : money(shipping)}</span>
+              <span>{quoted ? "Calculado no checkout" : shipping === 0 ? "Grátis" : money(shipping)}</span>
             </div>
             <div className="mt-3 flex items-baseline justify-between">
               <span className="display text-2xl">Total</span>

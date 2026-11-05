@@ -1,4 +1,4 @@
-import type { Order, OrderStatus, PaymentMethod } from "../types";
+import type { Order, OrderStatus, PaymentMethod, ShippingMethod } from "../types";
 
 const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 export const money = (value: number) => brl.format(value || 0);
@@ -28,6 +28,19 @@ export const PAYMENT_LABEL: Record<PaymentMethod, string> = {
   mercadopago: "Cartão / PIX online",
   sumup: "Online (PIX ou cartão)",
 };
+
+export const SHIPPING_LABEL: Record<ShippingMethod, string> = {
+  pickup: "Retirar em mãos",
+  pac: "PAC (Correios)",
+  sedex: "SEDEX (Correios)",
+  fixed: "Entrega",
+};
+
+export const businessDays = (days: number | null) => (days ? `até ${days} dia${days > 1 ? "s" : ""} úte${days > 1 ? "is" : "il"}` : "");
+
+/** "SEDEX (Correios) · até 3 dias úteis" */
+export const shippingSummary = (order: Pick<Order, "shippingMethod" | "shippingDays">) =>
+  [SHIPPING_LABEL[order.shippingMethod] || "Entrega", businessDays(order.shippingDays)].filter(Boolean).join(" · ");
 
 export const onlyDigits = (value: string) => value.replace(/\D/g, "");
 
@@ -63,10 +76,14 @@ export function whatsappOrderMessage(order: Order) {
     items,
     "",
     `Subtotal: ${money(order.subtotal)}`,
-    `Frete: ${order.shipping ? money(order.shipping) : "Grátis"}`,
+    order.shippingMethod === "pickup"
+      ? "Entrega: Retirar em mãos"
+      : `Frete (${shippingSummary(order)}): ${order.shipping ? money(order.shipping) : "Grátis"}`,
     `*Total: ${money(order.total)}*`,
     "",
-    `Entrega: ${a.street}, ${a.number}${a.complement ? ` — ${a.complement}` : ""}${a.district ? `, ${a.district}` : ""} — ${a.city}/${a.state}, CEP ${a.cep}`,
+    ...(order.shippingMethod === "pickup"
+      ? []
+      : [`Endereço: ${a.street}, ${a.number}${a.complement ? ` — ${a.complement}` : ""}${a.district ? `, ${a.district}` : ""} — ${a.city}/${a.state}, CEP ${a.cep}`]),
     "",
     "Fico no aguardo das instruções para o pagamento. Obrigado!",
   ].join("\n");

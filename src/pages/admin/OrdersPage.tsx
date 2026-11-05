@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import Modal from "../../components/Modal";
 import { useToast } from "../../context/ToastContext";
 import { api } from "../../lib/api";
-import { dateTime, money, PAYMENT_LABEL, STATUS_LABEL, time, whatsappLink } from "../../lib/format";
+import { dateTime, money, PAYMENT_LABEL, shippingSummary, STATUS_LABEL, time, whatsappLink } from "../../lib/format";
 import type { Order, OrderStatus } from "../../types";
 import { StatusBadge } from "../OrderPages";
 
@@ -76,9 +76,16 @@ function OrderModal({ order, onClose, onChange }: { order: Order; onClose: () =>
         </div>
         <div className="card p-4 text-sm">
           <p className="label">Entrega</p>
-          <p>{a.street}, {a.number}{a.complement ? ` — ${a.complement}` : ""}</p>
-          <p>{a.district ? `${a.district} — ` : ""}{a.city}/{a.state}</p>
-          <p className="font-mono text-ash">CEP {a.cep}</p>
+          <p className="mb-1 font-semibold uppercase text-acid">{shippingSummary(order)}</p>
+          {order.shippingMethod === "pickup" ? (
+            <p className="text-ash">Cliente vai retirar em mãos.</p>
+          ) : (
+            <>
+              <p>{a.street}, {a.number}{a.complement ? ` — ${a.complement}` : ""}</p>
+              <p>{a.district ? `${a.district} — ` : ""}{a.city}/{a.state}</p>
+              <p className="font-mono text-ash">CEP {a.cep}</p>
+            </>
+          )}
         </div>
       </div>
 
@@ -93,7 +100,7 @@ function OrderModal({ order, onClose, onChange }: { order: Order; onClose: () =>
         ))}
       </ul>
       <div className="mt-3 space-y-1 text-right font-mono text-sm">
-        <p className="text-ash">Subtotal {money(order.subtotal)} · Frete {order.shipping ? money(order.shipping) : "grátis"}</p>
+        <p className="text-ash">Subtotal {money(order.subtotal)} · {order.shippingMethod === "pickup" ? "Retirada em mãos" : <>Frete {order.shipping ? money(order.shipping) : "grátis"}</>}</p>
         <p className="text-lg">Total <span className="text-acid">{money(order.total)}</span></p>
       </div>
       {order.notes && (

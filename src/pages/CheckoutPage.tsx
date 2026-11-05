@@ -1,14 +1,16 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { WhatsappIcon } from "../components/Icons";
 import ProductArt from "../components/ProductArt";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
-import { shippingFor, useStore } from "../context/StoreContext";
+import { useStore } from "../context/StoreContext";
 import { useToast } from "../context/ToastContext";
 import { api } from "../lib/api";
-import { money, ONLINE_HOLD, onlyDigits, WHATSAPP_HOLD, whatsappLink, whatsappOrderMessage } from "../lib/format";
-import type { Address, Order, PaymentMethod } from "../types";
+import { businessDays, money, ONLINE_HOLD, onlyDigits, WHATSAPP_HOLD, whatsappLink, whatsappOrderMessage } from "../lib/format";
+import type { Address, Order, PaymentMethod, ShippingMethod, ShippingOption, ShippingQuote } from "../types";
+
+const PICKUP: ShippingOption = { method: "pickup", label: "Retirar em mãos", price: 0, days: null };
 
 const ADDRESS_KEY = "mw_last_address";
 
@@ -32,7 +34,47 @@ export default function CheckoutPage() {
   const [submitting, setSubmitting] = useState(false);
   const [cepLoading, setCepLoading] = useState(false);
 
-  const shipping = shippingFor(subtotal, settings);
+  const [shippingMethod, setShippingMethod] = useState<ShippingMethod | null>(null);
+  const [quote, setQuote] = useState<ShippingQuote | null>(null);
+  const [quoteLoading, setQuoteLoading] = useState(false);
+
+  const cepDigits = onlyDigits(address.cep);
+  const cartKey = items.map((i) => `${i.productId}:${i.quantity}`).join("|");
+
+  // Cota PAC/SEDEX assim que o CEP estiver completo (e de novo se o carrinho mudar).
+  useEffect(() => {
+    setQuote(null);
+    if (cepDigits.length !== 8 || !cartKey) return;
+    let active = true;
+    setQuoteLoading(true);
+    const timer = setTimeout(() => {
+      api<ShippingQuote>("/shipping/quote", {
+        method: "POST",
+        body: {
+          cep: cepDigits,
+          items: cartKey.split("|").map((entry) => {
+            const [productId, quantity] = entry.split(":");
+            return { productId, quantity: Number(quantity) };
+          }),
+        },
+      })
+        .then((q) => active && setQuote(q))
+        .catch((err) => active && setQuote({ options: [], error: (err as Error).message, pickupAddress: "" }))
+        .finally(() => active && setQuoteLoading(false));
+    }, 300);
+    return () => {
+      active = false;
+      clearTimeout(timer);
+      setQuoteLoading(false);
+    };
+  }, [cepDigits, cartKey]);
+
+  const deliveryChoices = [PICKUP, ...(quote?.options || [])];
+  const selected = deliveryChoices.find((o) => o.method === shippingMethod) || null;
+  const isPickup = shippingMethod === "pickup";
+  const pickupAddress = quote?.pickupAddress || settings.pickupAddress;
+
+  const shipping = selected?.price || 0;
   const total = subtotal + shipping;
 
   const set = (key: keyof Address, value: string) => setAddress((a) => ({ ...a, [key]: value }));
@@ -59,6 +101,11 @@ export default function CheckoutPage() {
     // Cada botão de finalizar envia a sua forma de pagamento.
     const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
     const payment = (submitter?.value || "whatsapp") as PaymentMethod;
+    if (!selected) {
+      toast(quoteLoading ? "Aguarde a cotação do frete terminar." : "Escolha como quer receber: Correios ou retirar em mãos.", "error");
+      document.getElementById("entrega")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
     // A aba do WhatsApp é aberta já no clique: depois do await o navegador bloquearia o pop-up.
     const whatsTab = payment === "whatsapp" ? window.open("", "_blank") : null;
     setSubmitting(true);
@@ -68,6 +115,7 @@ export default function CheckoutPage() {
         body: {
           items: items.map((i) => ({ productId: i.productId, size: i.size, quantity: i.quantity })),
           address,
+          shippingMethod: selected.method,
           paymentMethod: payment,
           notes,
         },
@@ -118,19 +166,57 @@ export default function CheckoutPage() {
           <div className="grid grid-cols-6 gap-4">
             <div className="col-span-3 md:col-span-2">
               <label className="label" htmlFor="cep">CEP {cepLoading && "…"}</label>
-              <input id="cep" className="input" required inputMode="numeric" value={address.cep} onChange={(e) => set("cep", e.target.value)} onBlur={(e) => lookupCep(e.target.value)} placeholder="00000-000" />
+              <input id="cep" className="input" required={!isPickup} inputMode="numeric" value={address.cep} onChange={(e) => { set("cep", e.target.value); lookupCep(e.target.value); }} placeholder="00000-000" />
             </div>
             <div className="col-span-3 md:col-span-4">
               <label className="label" htmlFor="phone">WhatsApp</label>
               <input id="phone" className="input" type="tel" value={address.phone || ""} onChange={(e) => set("phone", e.target.value)} placeholder="(11) 99999-9999" />
             </div>
+          </div>
+
+          <div id="entrega" className="mt-6">
+            <p className="label">Como você quer receber?</p>
+            <div className="flex flex-col gap-2" role="radiogroup">
+              {deliveryChoices.map((o) => {
+                const checked = shippingMethod === o.method;
+                return (
+                  <label
+                    key={o.method}
+                    className={`flex cursor-pointer items-center gap-3 border-2 p-4 transition ${checked ? "border-acid" : "border-line hover:border-bone"}`}
+                  >
+                    <input type="radio" name="shipping" className="h-4 w-4 accent-current" checked={checked} onChange={() => setShippingMethod(o.method)} />
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-semibold uppercase">{o.label}</span>
+                      <span className="block text-xs text-ash">
+                        {o.method === "pickup"
+                          ? pickupAddress || "Sem custo de frete. Combinamos o local e o horário pelo WhatsApp."
+                          : [businessDays(o.days), o.free && "frete grátis ✦"].filter(Boolean).join(" · ") || "Entrega no endereço abaixo"}
+                      </span>
+                    </span>
+                    <span className={`font-mono text-sm ${checked ? "text-acid" : ""}`}>{o.price === 0 ? "Grátis" : money(o.price)}</span>
+                  </label>
+                );
+              })}
+            </div>
+            {!isPickup && (
+              <p className="mt-2 text-xs text-ash">
+                {cepDigits.length !== 8
+                  ? "Digite o CEP para ver o valor do PAC e do SEDEX."
+                  : quoteLoading
+                    ? "Consultando os Correios…"
+                    : quote?.error || ""}
+              </p>
+            )}
+          </div>
+
+          <div className={`mt-6 grid grid-cols-6 gap-4 ${isPickup ? "hidden" : ""}`}>
             <div className="col-span-6 md:col-span-4">
               <label className="label" htmlFor="street">Rua</label>
-              <input id="street" className="input" required value={address.street} onChange={(e) => set("street", e.target.value)} />
+              <input id="street" className="input" required={!isPickup} value={address.street} onChange={(e) => set("street", e.target.value)} />
             </div>
             <div className="col-span-2">
               <label className="label" htmlFor="number">Número</label>
-              <input id="number" className="input" required value={address.number} onChange={(e) => set("number", e.target.value)} />
+              <input id="number" className="input" required={!isPickup} value={address.number} onChange={(e) => set("number", e.target.value)} />
             </div>
             <div className="col-span-4 md:col-span-3">
               <label className="label" htmlFor="complement">Complemento</label>
@@ -142,11 +228,11 @@ export default function CheckoutPage() {
             </div>
             <div className="col-span-4">
               <label className="label" htmlFor="city">Cidade</label>
-              <input id="city" className="input" required value={address.city} onChange={(e) => set("city", e.target.value)} />
+              <input id="city" className="input" required={!isPickup} value={address.city} onChange={(e) => set("city", e.target.value)} />
             </div>
             <div className="col-span-2">
               <label className="label" htmlFor="state">UF</label>
-              <input id="state" className="input uppercase" required maxLength={2} value={address.state} onChange={(e) => set("state", e.target.value.toUpperCase())} />
+              <input id="state" className="input uppercase" required={!isPickup} maxLength={2} value={address.state} onChange={(e) => set("state", e.target.value.toUpperCase())} />
             </div>
           </div>
         </section>
@@ -195,7 +281,10 @@ export default function CheckoutPage() {
         </ul>
         <div className="mt-5 space-y-1 border-t border-line pt-4 font-mono text-sm text-ash">
           <div className="flex justify-between"><span>Subtotal</span><span>{money(subtotal)}</span></div>
-          <div className="flex justify-between"><span>Frete</span><span>{shipping === 0 ? "Grátis" : money(shipping)}</span></div>
+          <div className="flex justify-between gap-3">
+            <span>{selected ? (isPickup ? "Retirada" : `Frete · ${selected.label}`) : "Frete"}</span>
+            <span className="shrink-0">{!selected ? "Escolha a entrega" : isPickup ? "Sem custo" : shipping === 0 ? "Grátis" : money(shipping)}</span>
+          </div>
         </div>
         <div className="mt-3 flex items-baseline justify-between">
           <span className="display text-2xl">Total</span>

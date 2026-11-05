@@ -11,6 +11,8 @@ const DEFAULT_SETTINGS: StoreSettings = {
   freeShippingMin: 0,
   mercadoPagoEnabled: false,
   onlinePayment: null,
+  correiosEnabled: false,
+  pickupAddress: "",
 };
 
 interface StoreContextValue {
